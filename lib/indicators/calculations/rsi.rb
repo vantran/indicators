@@ -1,4 +1,4 @@
- module Indicators
+module Indicators
   #
   # Relative Strength Index
   class Rsi
@@ -14,9 +14,13 @@
     def self.calculate data, parameters
       periods = parameters
       output = Array.new
+      avg_gain_array = Array.new
+      avg_loss_array = Array.new
+      rs = Array.new
+      result = {}
+
       adj_closes = Indicators::Helper.validate_data(data, :adj_close, periods)
 
-      rs = Array.new
       average_gain = 0.0
       average_loss = 0.0
       adj_closes.each_with_index do |adj_close, index|
@@ -36,6 +40,8 @@
             average_gain = (average_gain * (periods-1) + current_gain) / periods
             average_loss = (average_loss * (periods-1) + current_loss) / periods
           end
+          avg_gain_array[index] = average_gain
+          avg_loss_array[index] = average_loss
           rs[index] = average_gain / average_loss
           output[index] = 100 - 100/(1+rs[index])
           if average_gain == 0
@@ -49,7 +55,12 @@
         end
       end
 
-      return output
+      result['avg_gain'] = avg_gain_array
+      result['avg_loss'] = avg_loss_array
+      result['rs'] = rs
+      result['rsi'] = output
+
+      return result
 
     end
 
