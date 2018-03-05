@@ -20,6 +20,9 @@ module Indicators
         else
           output[index] = nil
         end
+
+        # round this number otherwise the algorithm will take forever
+        output[index] = output[index].round(8) if output[index]
       end
       
       return output

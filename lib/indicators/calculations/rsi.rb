@@ -16,7 +16,6 @@ module Indicators
       output = Array.new
       avg_gain_array = Array.new
       avg_loss_array = Array.new
-      rs = Array.new
       result = {}
 
       adj_closes = Indicators::Helper.validate_data(data, :adj_close, periods)
@@ -40,24 +39,27 @@ module Indicators
             average_gain = (average_gain * (periods-1) + current_gain) / periods
             average_loss = (average_loss * (periods-1) + current_loss) / periods
           end
+          average_gain = average_gain.round(8) if average_gain
+          average_loss = average_loss.round(8) if average_loss
+
           avg_gain_array[index] = average_gain
           avg_loss_array[index] = average_loss
-          rs[index] = average_gain / average_loss
-          output[index] = 100 - 100/(1+rs[index])
+
           if average_gain == 0
             output[index] = 0
           elsif average_loss == 0
             output[index] = 100
+          else
+            rs = (average_gain / average_loss)
+            output[index] = (100 - 100/(1+rs)).round(8)
           end
         else
-          rs[index] = nil
           output[index] = nil
         end
       end
 
       result['avg_gain'] = avg_gain_array
       result['avg_loss'] = avg_loss_array
-      result['rs'] = rs
       result['rsi'] = output
 
       return result
