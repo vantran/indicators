@@ -17,6 +17,7 @@ module Indicators
       avg_gain_array = Array.new
       avg_loss_array = Array.new
       result = {}
+      rs_array = Array.new
       # alpha = (1/14.0).to_d
       alpha = 2.0 / (1 + periods)
 
@@ -43,27 +44,31 @@ module Indicators
             # average_gain = average_gain * (1 - alpha) + (alpha * current_gain)
             # average_loss = average_loss * (1 - alpha) + (alpha * current_loss)
           end
-          average_gain = average_gain.round(8) if average_gain
-          average_loss = average_loss.round(8) if average_loss
+          average_gain = average_gain.round(16) if average_gain
+          average_loss = average_loss.round(16) if average_loss
 
           avg_gain_array[index] = average_gain
           avg_loss_array[index] = average_loss
+
+          rs_array[index] = (average_gain / average_loss)
+          output[index] = (100 - 100/(1+rs_array[index])).round(16)
 
           if average_gain == 0
             output[index] = 0
           elsif average_loss == 0
             output[index] = 100
-          else
-            rs = (average_gain / average_loss)
-            output[index] = (100 - 100/(1+rs)).round(8)
           end
         else
+          avg_gain_array[index] = nil
+          avg_loss_array[index] = nil
+          rs_array[index] = nil
           output[index] = nil
         end
       end
 
       result['avg_gain'] = avg_gain_array
       result['avg_loss'] = avg_loss_array
+      result['rs'] = rs_array
       result['rsi'] = output
 
       return result
