@@ -31,6 +31,12 @@ module Indicators
         @params << Indicators::Helper.get_parameters(all_params, 0, 14)
         @params << Indicators::Helper.get_parameters(all_params, 1, 3)
         @params << Indicators::Helper.get_parameters(all_params, 2, 3)
+      when :stoch_rsi
+        @params = Array.new
+        @params << Indicators::Helper.get_parameters(all_params, 0, 3)
+        @params << Indicators::Helper.get_parameters(all_params, 1, 3)
+        @params << Indicators::Helper.get_parameters(all_params, 2, 14)
+        @params << Indicators::Helper.get_parameters(all_params, 2, 14)
       end
 
       # This is a Securities gem hash.
@@ -50,6 +56,7 @@ module Indicators
                   when :macd then Indicators::Macd.calculate(data, @params)
                   when :rsi then Indicators::Rsi.calculate(data, @params)
                   when :sto then Indicators::Sto.calculate(data, @params)
+                  when :stoch_rsi then Indicators::StochRsi.calculate(data, @params)
 			          end
       return @output
     end
